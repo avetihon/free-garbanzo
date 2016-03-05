@@ -10,20 +10,64 @@ export class Snake {
     this.element.style.left = `${positionY}px`;
   }
 
-  moveLeft() {
-    this.element.style.left = '110px';
+  init() {
+    // setInterval(() => {
+    //   this.moveLeft();
+    // }, 500);
   }
 
-  moveRight() {
-    this.element.style.left = '0px';
+  moveTop() {
+
+  }
+
+  moveBottom() {
+
+  }
+
+  moveLeft(context) {
+    const self = context;
+    const position = parseInt(self.element.style.left, 10) - 10;
+    self.element.style.left = `${position}px`;
+  }
+
+  moveRight(context) {
+    const self = context;
+    const position = parseInt(self.element.style.left, 10) + 10;
+    self.element.style.left = `${position}px`;
+  }
+
+  setInterval(interval) {
+    this.interval = interval;
+  }
+
+  getInterval() {
+    return this.interval;
+  }
+
+  moveTo(direction, context) {
+    const interval = this.getInterval();
+    let newInterval;
+    if (interval) {
+      clearInterval(interval);
+      newInterval = setInterval(() => {
+        direction(context);
+      }, 500);
+      this.setInterval(newInterval);
+    } else {
+      newInterval = setInterval(() => {
+        direction(context);
+      }, 500);
+      this.setInterval(newInterval);
+    }
   }
 
   contolsKeyboard(event) {
     const key = event.keyCode || event.which;
+
     if (key === KEY_A) {
-      this.moveLeft();
+      this.moveTo(this.moveLeft, this);
     } else if (key === KEY_D) {
-      this.moveRight();
+      this.moveTo(this.moveRight, this);
     }
   }
 }

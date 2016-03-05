@@ -436,18 +436,39 @@
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	var Level = function () {
-	  function Level() {
+	  function Level(element) {
 	    _classCallCheck(this, Level);
+
+	    this.element = element;
 	  }
 
-	  _createClass(Level, null, [{
-	    key: 'generateSnakePosition',
-
+	  _createClass(Level, [{
+	    key: 'getLevelCoordinates',
+	    value: function getLevelCoordinates() {
+	      return this.element.getBoundingClientRect();
+	    }
+	  }, {
+	    key: 'getLevelWidth',
+	    value: function getLevelWidth() {
+	      var levelWidth = this.getLevelCoordinates().right - this.getLevelCoordinates().left;
+	      return levelWidth;
+	    }
+	  }, {
+	    key: 'getLevelHeight',
+	    value: function getLevelHeight() {
+	      var levelHeight = this.getLevelCoordinates().bottom - this.getLevelCoordinates().top;
+	      return levelHeight;
+	    }
 	    /**
 	     * Returns a random number between min (inclusive) and max (exclusive)
 	     */
-	    value: function generateSnakePosition(maxWidth, maxHeight) {
+
+	  }, {
+	    key: 'generateSnakePosition',
+	    value: function generateSnakePosition() {
 	      var min = 0;
+	      var maxWidth = this.getLevelWidth();
+	      var maxHeight = this.getLevelHeight();
 	      var randTop = Math.round(Math.random() * (maxWidth - min) + min);
 	      var randLeft = Math.round(Math.random() * (maxHeight - min) + min);
 
@@ -462,28 +483,26 @@
 	}();
 
 	var level = document.querySelector('.level');
-	var levelCoordinates = level.getBoundingClientRect();
-	var levelWidth = levelCoordinates.right - levelCoordinates.left;
-	var levelHeight = levelCoordinates.bottom - levelCoordinates.top;
-
 	var snakeElement = document.createElement('div');
 	snakeElement.className = 'snake';
+	level.appendChild(snakeElement);
 
-	var snake = new _snake.Snake(snakeElement, Level.generateSnakePosition(levelWidth, levelHeight).randomTop, Level.generateSnakePosition(levelWidth, levelHeight).randomLeft);
+	var test = new Level(document.querySelector('.level'));
+	var snake = new _snake.Snake(snakeElement, test.generateSnakePosition().randomTop, test.generateSnakePosition().randomLeft);
 
-	level.appendChild(snake.element);
+	window.addEventListener('click', function (event) {
+	  return snake.init();
+	});
+
 	window.addEventListener('keypress', function (event) {
 	  snake.contolsKeyboard(event);
 	});
-
-	// import bear from 'snake.js';
-	// console.log(bear);
 
 /***/ },
 /* 7 */
 /***/ function(module, exports) {
 
-	'use strict';
+	"use strict";
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -503,28 +522,74 @@
 	    _classCallCheck(this, Snake);
 
 	    this.element = element;
-	    this.element.style.top = positionX + 'px';
-	    this.element.style.left = positionY + 'px';
+	    this.element.style.top = positionX + "px";
+	    this.element.style.left = positionY + "px";
 	  }
 
 	  _createClass(Snake, [{
-	    key: 'moveLeft',
-	    value: function moveLeft() {
-	      this.element.style.left = '110px';
+	    key: "init",
+	    value: function init() {
+	      // setInterval(() => {
+	      //   this.moveLeft();
+	      // }, 500);
 	    }
 	  }, {
-	    key: 'moveRight',
-	    value: function moveRight() {
-	      this.element.style.left = '0px';
+	    key: "moveTop",
+	    value: function moveTop() {}
+	  }, {
+	    key: "moveBottom",
+	    value: function moveBottom() {}
+	  }, {
+	    key: "moveLeft",
+	    value: function moveLeft(context) {
+	      var self = context;
+	      var position = parseInt(self.element.style.left, 10) - 10;
+	      self.element.style.left = position + "px";
 	    }
 	  }, {
-	    key: 'contolsKeyboard',
+	    key: "moveRight",
+	    value: function moveRight(context) {
+	      var self = context;
+	      var position = parseInt(self.element.style.left, 10) + 10;
+	      self.element.style.left = position + "px";
+	    }
+	  }, {
+	    key: "setInterval",
+	    value: function setInterval(interval) {
+	      this.interval = interval;
+	    }
+	  }, {
+	    key: "getInterval",
+	    value: function getInterval() {
+	      return this.interval;
+	    }
+	  }, {
+	    key: "moveTo",
+	    value: function moveTo(direction, context) {
+	      var interval = this.getInterval();
+	      var newInterval = undefined;
+	      if (interval) {
+	        clearInterval(interval);
+	        newInterval = setInterval(function () {
+	          direction(context);
+	        }, 500);
+	        this.setInterval(newInterval);
+	      } else {
+	        newInterval = setInterval(function () {
+	          direction(context);
+	        }, 500);
+	        this.setInterval(newInterval);
+	      }
+	    }
+	  }, {
+	    key: "contolsKeyboard",
 	    value: function contolsKeyboard(event) {
 	      var key = event.keyCode || event.which;
+
 	      if (key === KEY_A) {
-	        this.moveLeft();
+	        this.moveTo(this.moveLeft, this);
 	      } else if (key === KEY_D) {
-	        this.moveRight();
+	        this.moveTo(this.moveRight, this);
 	      }
 	    }
 	  }]);
