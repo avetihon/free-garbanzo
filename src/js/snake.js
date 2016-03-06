@@ -8,12 +8,22 @@ export class Snake {
     this.element = element;
     this.element.style.top = `${positionX}px`;
     this.element.style.left = `${positionY}px`;
+
+    const snakePart = document.createElement('div');
+    snakePart.className = 'snake__part';
+    snakePart.style.top = `${positionX}px`;
+    snakePart.style.left = `${positionY - 10}px`;
+    this.element.parentNode.insertBefore(snakePart, this.element);
   }
 
   init() {
     // setInterval(() => {
     //   this.moveLeft();
     // }, 500);
+  }
+
+  bodyMove() {
+
   }
 
   moveTop() {
@@ -25,15 +35,27 @@ export class Snake {
   }
 
   moveLeft(context) {
-    const self = context;
-    const position = parseInt(self.element.style.left, 10) - 10;
-    self.element.style.left = `${position}px`;
+    const snakeParts = document.querySelectorAll('.snake__part');
+    // im try use for of loop but he produces error
+    for (let i = 0; i < snakeParts.length; i++) {
+      let position = parseInt(snakeParts[i].style.left, 10) - 10;
+      snakeParts[i].style.left = `${position}px`;
+    }
+    // const self = context;
+    // const position = parseInt(self.element.style.left, 10) - 10;
+    // self.element.style.left = `${position}px`;
   }
 
   moveRight(context) {
-    const self = context;
-    const position = parseInt(self.element.style.left, 10) + 10;
-    self.element.style.left = `${position}px`;
+    const snakeParts = document.querySelectorAll('.snake__part');
+    // im try use for of loop but he produces error
+    for (let i = 0; i < snakeParts.length; i++) {
+      let position = parseInt(snakeParts[i].style.left, 10) + 10;
+      snakeParts[i].style.left = `${position}px`;
+    }
+    // const self = context;
+    // const position = parseInt(self.element.style.left, 10) + 10;
+    // self.element.style.left = `${position}px`;
   }
 
   setInterval(interval) {
@@ -69,6 +91,10 @@ export class Snake {
     } else if (key === KEY_D) {
       this.moveTo(this.moveRight, this);
     }
+  }
+
+  eatFood() {
+
   }
 }
 

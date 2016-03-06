@@ -38,7 +38,7 @@ class Level {
 
 const level = document.querySelector('.level');
 const snakeElement = document.createElement('div');
-snakeElement.className = 'snake';
+snakeElement.className = 'snake__part snake__part--head';
 level.appendChild(snakeElement);
 
 

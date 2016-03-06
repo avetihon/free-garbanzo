@@ -1,6 +1,8 @@
 .snake {
-  position: absolute;
-  width: 10px;
-  height: 10px;
-  background-color: #000;
+  &__part {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background-color: #000;
+  }
 }
