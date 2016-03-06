@@ -51,6 +51,6 @@ const snake = new Snake(
 
 window.addEventListener('click', event => snake.init());
 
-window.addEventListener('keypress', event => {
+window.addEventListener('keydown', event => {
   snake.contolsKeyboard(event);
 });
