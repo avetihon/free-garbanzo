@@ -19,6 +19,14 @@ class Level {
     const levelHeight = this.getLevelCoordinates().bottom - this.getLevelCoordinates().top;
     return levelHeight;
   }
+
+  createRandomNumbers(min, max) {
+    let number = Math.random() * (max - min);
+    number = number - number % 10;
+
+    return number;
+  }
+
   /**
    * Returns a random number between min (inclusive) and max (exclusive)
    */
@@ -26,8 +34,8 @@ class Level {
     const min = 0;
     const maxWidth = this.getLevelWidth();
     const maxHeight = this.getLevelHeight();
-    const randTop = Math.round(Math.random() * (maxWidth - min) + min);
-    const randLeft = Math.round(Math.random() * (maxHeight - min) + min);
+    const randTop = this.createRandomNumbers(min, maxHeight);
+    const randLeft = this.createRandomNumbers(min, maxWidth);
 
     return {
       randomTop: randTop,
@@ -49,7 +57,7 @@ const snake = new Snake(
   test.generateSnakePosition().randomLeft
 );
 
-window.addEventListener('click', event => snake.init());
+// window.addEventListener('click', event => snake.init());
 
 window.addEventListener('keydown', event => {
   snake.contolsKeyboard(event);
