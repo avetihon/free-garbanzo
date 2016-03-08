@@ -1,3 +1,5 @@
+const autoprefixer = require('autoprefixer');
+
 module.exports = {
   entry: './src/js/main.js',
   output: {
@@ -9,7 +11,7 @@ module.exports = {
     loaders: [
       {
         test: /\.scss$/,
-        loader: 'style!css!sass',
+        loader: 'style!css!postcss!sass',
       },
       {
         test: /\.js$/,
@@ -17,6 +19,9 @@ module.exports = {
         loader: 'babel-loader',
       },
     ],
+  },
+  postcss: () => {
+    return [autoprefixer];
   },
   watch: true,
   devServer: {

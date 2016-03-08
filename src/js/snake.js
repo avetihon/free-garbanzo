@@ -6,24 +6,32 @@ const KEY_D = 68;
 export class Snake {
   constructor(element, positionX, positionY) {
     this.element = element;
-    this.element.style.top = `${positionX}px`;
-    this.element.style.left = `${positionY}px`;
-
-    // const snakePart = document.createElement('div');
-    // snakePart.className = 'snake__part';
-    // snakePart.style.top = `${positionX}px`;
-    // snakePart.style.left = `${positionY - 20}px`;
-    // this.element.parentNode.insertBefore(snakePart, this.element);
-
-    // const snakePart1 = document.createElement('div');
-    // snakePart1.className = 'snake__part';
-    // snakePart1.style.top = `${positionX}px`;
-    // snakePart1.style.left = `${positionY - 10}px`;
-    // this.element.parentNode.insertBefore(snakePart1, this.element);
+    this.element.style.left = `${positionX}px`;
+    this.element.style.top = `${positionY}px`;
   }
 
   init() {
+    let i = 2;
+    const headYCoord = parseInt(this.element.style.top, 10);
+    const headXCoord = parseInt(this.element.style.left, 10);
 
+    while (i > 0) {
+      const snakePart = document.createElement('div');
+      snakePart.className = 'snake__part';
+      snakePart.style.top = `${headYCoord}px`;
+      snakePart.style.left = `${headXCoord - (i * 10)}px`;
+      this.element.parentNode.insertBefore(snakePart, this.element);
+
+      i--;
+    }
+  }
+
+  set lastSnakePart(lastPart) {
+    this.lastPart = lastPart;
+  }
+
+  get lastSnakePart() {
+    return this.lastPart;
   }
 
   moveBody(posX, posY) {
@@ -35,12 +43,14 @@ export class Snake {
     }
 
     arrayOfCoordinates.push([`${posX}px`, `${posY}px`]);
-    arrayOfCoordinates.shift();
+    this.lastSnakePart = arrayOfCoordinates.shift();
 
     for (let i = 0; i < snakeParts.length; i++) {
       snakeParts[i].style.left = arrayOfCoordinates[i][0];
       snakeParts[i].style.top = arrayOfCoordinates[i][1];
     }
+
+    this.eatFood();
   }
 
   moveTop() {
@@ -75,11 +85,11 @@ export class Snake {
     this.moveBody(positionX, positionY);
   }
 
-  setIntervalNumber(interval) {
+  set intervalNumber(interval) {
     this.interval = interval;
   }
 
-  getIntervalNumber() {
+  get intervalNumber() {
     return this.interval;
   }
 
@@ -88,7 +98,7 @@ export class Snake {
     const newInterval = setInterval(() => {
       direction.call(this);
     }, time);
-    this.setIntervalNumber(newInterval);
+    this.intervalNumber = newInterval;
   }
 
   get moveDirection() {
@@ -100,7 +110,7 @@ export class Snake {
   }
 
   moveTo(direction) {
-    const interval = this.getIntervalNumber();
+    const interval = this.intervalNumber;
     if (interval) {
       clearInterval(interval);
     }
@@ -122,7 +132,31 @@ export class Snake {
     }
   }
 
-  eatFood() {
 
+
+  newSnakePart() {
+    // const newPart = this.lastSnakePart;
+    // console.log(this.lastSnakePart)
+    const newPart = document.createElement('div');
+    newPart.className = 'snake__part';
+    newPart.style.top = this.lastSnakePart[1];
+    newPart.style.left = this.lastSnakePart[0];
+
+    this.element.parentNode.insertBefore(newPart,  this.element.parentNode.firstChild);
+
+    // console.log(newPart)
+  }
+
+  eatFood() {
+    const headYCoord = parseInt(this.element.style.top, 10);
+    const headXCoord = parseInt(this.element.style.left, 10);
+
+    const food = document.querySelector('.level__food');
+    const foodYCoord = parseInt(food.style.top, 10);
+    const foodXCoord = parseInt(food.style.left, 10);
+    if (headYCoord === foodYCoord && headXCoord === foodXCoord) {
+      this.newSnakePart();
+    }
+    // if(head === food)
   }
 }

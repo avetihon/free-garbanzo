@@ -6,6 +6,10 @@ class Level {
     this.element = element;
   }
 
+  init() {
+    this.addFood();
+  }
+
   getLevelCoordinates() {
     return this.element.getBoundingClientRect();
   }
@@ -42,6 +46,28 @@ class Level {
       randomLeft: randLeft,
     };
   }
+
+  addFood() {
+    const foodElement = document.createElement('div');
+    foodElement.className = 'level__food';
+    foodElement.style.top = `${this.generateFoodPosition().randomTop}px`;
+    foodElement.style.left = `${this.generateFoodPosition().randomLeft}px`;
+
+    this.element.appendChild(foodElement);
+  }
+
+  generateFoodPosition() {
+    const min = 0;
+    const maxWidth = this.getLevelWidth();
+    const maxHeight = this.getLevelHeight();
+    const randTop = this.createRandomNumbers(min, maxHeight);
+    const randLeft = this.createRandomNumbers(min, maxWidth);
+
+    return {
+      randomTop: randTop,
+      randomLeft: randLeft,
+    };
+  }
 }
 
 const level = document.querySelector('.level');
@@ -51,13 +77,14 @@ level.appendChild(snakeElement);
 
 
 const test = new Level(document.querySelector('.level'));
+test.init();
 const snake = new Snake(
   snakeElement,
-  test.generateSnakePosition().randomTop,
-  test.generateSnakePosition().randomLeft
+  test.generateSnakePosition().randomLeft,
+  test.generateSnakePosition().randomTop
 );
 
-// window.addEventListener('click', event => snake.init());
+window.addEventListener('click', event => snake.init());
 
 window.addEventListener('keydown', event => {
   snake.contolsKeyboard(event);
