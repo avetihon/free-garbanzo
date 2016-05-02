@@ -1,4 +1,9 @@
+/**
+ * This class control level element
+ */
+
 import { Snake } from './snake.js';
+import { Food } from './food.js';
 
 class Level {
 
@@ -6,8 +11,15 @@ class Level {
     this.element = element;
   }
 
-  init() {
-    this.addFood();
+  initNewLevel() {
+    const snake = new Snake(this.element);
+    const food = new Food(this.element);
+    snake.initNewSnake();
+    food.initNewFood();
+  }
+
+  getLevel() {
+    return this.element;
   }
 
   getLevelCoordinates() {
@@ -31,61 +43,31 @@ class Level {
     return number;
   }
 
+  levelRegion() {
+    const width = this.getLevelCoordinates().right - this.getLevelCoordinates().left;
+    const height = this.getLevelCoordinates().bottom - this.getLevelCoordinates().top;
+
+    return {
+      width,
+      height,
+    };
+  }
+
   /**
    * Returns a random number between min (inclusive) and max (exclusive)
    */
-  generateSnakePosition() {
-    const min = 0;
-    const maxWidth = this.getLevelWidth();
-    const maxHeight = this.getLevelHeight();
-    const randTop = this.createRandomNumbers(min, maxHeight);
-    const randLeft = this.createRandomNumbers(min, maxWidth);
+  // generateSnakePosition() {
+  //   const min = 0;
+  //   const maxWidth = this.getLevelWidth();
+  //   const maxHeight = this.getLevelHeight();
+  //   const randomTop = this.createRandomNumbers(min, maxHeight);
+  //   const randomLeft = this.createRandomNumbers(min, maxWidth);
 
-    return {
-      randomTop: randTop,
-      randomLeft: randLeft,
-    };
-  }
-
-  addFood() {
-    const foodElement = document.createElement('div');
-    foodElement.className = 'level__food';
-    foodElement.style.top = `${this.generateFoodPosition().randomTop}px`;
-    foodElement.style.left = `${this.generateFoodPosition().randomLeft}px`;
-
-    this.element.appendChild(foodElement);
-  }
-
-  generateFoodPosition() {
-    const min = 0;
-    const maxWidth = this.getLevelWidth();
-    const maxHeight = this.getLevelHeight();
-    const randTop = this.createRandomNumbers(min, maxHeight);
-    const randLeft = this.createRandomNumbers(min, maxWidth);
-
-    return {
-      randomTop: randTop,
-      randomLeft: randLeft,
-    };
-  }
+  //   return {
+  //     randomTop,
+  //     randomLeft,
+  //   };
+  // }
 }
 
-const level = document.querySelector('.level');
-const snakeElement = document.createElement('div');
-snakeElement.className = 'snake__part snake__part--head';
-level.appendChild(snakeElement);
-
-
-const test = new Level(document.querySelector('.level'));
-test.init();
-const snake = new Snake(
-  snakeElement,
-  test.generateSnakePosition().randomLeft,
-  test.generateSnakePosition().randomTop
-);
-
-window.addEventListener('click', event => snake.init());
-
-window.addEventListener('keydown', event => {
-  snake.contolsKeyboard(event);
-});
+export const test = new Level(document.querySelector('.level'));

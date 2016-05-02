@@ -1,13 +1,29 @@
-const currentTitle = document.title;
+import { test } from './level.js';
 
-/* little funnies */
-window.addEventListener('blur', () => document.title = 'We miss you...');
-window.addEventListener('focus', () => document.title = currentTitle);
+// const setupModule = (() => {
+//   const snakePartSize = 10;
+//   const levelWidth = 300;
+//   const levelHeight = 200;
+// })();
 
-require('./../js/level.js');
+const changeTitleModule = (() => {
+  const currentTitle = document.title;
 
-// const body = document.getElementsByTagName('body')[0];
-// const scene = document.createElement('section');
+  const event = () => {
+    /* little funnies */
+    window.addEventListener('blur', () => document.title = 'We miss you...');
+    window.addEventListener('focus', () => document.title = currentTitle);
+  };
 
-// scene.className = 'scene';
-// body.appendChild(scene);
+  const init = () => {
+    event();
+  };
+
+  return {
+    init,
+  };
+})();
+
+
+changeTitleModule.init();
+test.initNewLevel();
