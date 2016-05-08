@@ -2,18 +2,19 @@
  * This class control snake element
  */
 import { Food } from './food.js';
+import { level } from './init.js';
 
 const KEY_W = 87;
 const KEY_S = 83;
 const KEY_A = 65;
 const KEY_D = 68;
 
-const food = new Food();
+// const food = new Food();
 
 export class Snake {
 
-  constructor(level) {
-    this.level = level;
+  constructor(levelElement) {
+    this.levelElement = levelElement;
   }
 
   initNewSnake() {
@@ -24,13 +25,13 @@ export class Snake {
     snakeElement.style.left = '40px';
 
     // append to level my snake
-    this.level.appendChild(snakeElement);
+    this.levelElement.appendChild(snakeElement);
 
     // create reference on current snake element
     this.element = snakeElement;
 
     // init remaining snake body parts
-    this.initSnakeBody(7);
+    this.initSnakeBody(3);
 
     // init controll
     this.setupControll();
@@ -64,23 +65,45 @@ export class Snake {
     snakePart.className = 'snake__part';
     snakePart.style.top = coordY;
     snakePart.style.left = coordX;
-    // console.log(coordX + ' ' + coordY)
-    // this.element.parentNode.firstChild
     this.element.parentNode.insertBefore(snakePart, element);
   }
 
-  /**
-   * Set reference to snake tail
-   */
+  addToSnakeNewTail() {
+    this.addNewSnakePart(this.snakeTail[0], this.snakeTail[1], this.element.parentNode.firstChild);
+  }
+
+  get snakeHead() {
+    const headXCoord = parseInt(this.element.style.left, 10);
+    const headYCoord = parseInt(this.element.style.top, 10);
+
+    return {
+      headXCoord,
+      headYCoord,
+    };
+  }
+
+  // Set reference to snake tail
   set snakeTail(tail) {
     this.tail = tail;
   }
 
-  /**
-   * Get reference to snake tail
-   */
+  // Get reference to snake tail
   get snakeTail() {
     return this.tail;
+  }
+
+  /**
+   * Function return all current snake coordinates
+   */
+  currentSnakePartsCoordinates() {
+    const snakeParts = document.querySelectorAll('.snake__part');
+    const arrayOfCoordinates = [];
+
+    for (const snake of Array.from(snakeParts)) {
+      arrayOfCoordinates.push([snake.style.left, snake.style.top]);
+    }
+
+    return arrayOfCoordinates;
   }
 
   /**
@@ -88,11 +111,7 @@ export class Snake {
    */
   moveBody(posX, posY) {
     const snakeParts = document.querySelectorAll('.snake__part');
-    const arrayOfCoordinates = [];
-
-    for (const snake of Array.from(snakeParts)) {
-      arrayOfCoordinates.push([snake.style.left, snake.style.top]);
-    }
+    const arrayOfCoordinates = this.currentSnakePartsCoordinates();
 
     arrayOfCoordinates.push([`${posX}px`, `${posY}px`]);
     this.snakeTail = arrayOfCoordinates.shift();
@@ -103,7 +122,8 @@ export class Snake {
       snakeParts[i].style.top = arrayOfCoordinates[i][1];
     }
 
-    this.checkFood();
+    this.checkBoundaries();
+    // this.checkFood();
   }
 
   /**
@@ -163,21 +183,24 @@ export class Snake {
   }
 
   // clear current time interval and setup new
-  restartInterval() {
+  animateMove() {
     const time = 300;
     const interval = this.intervalNumber;
 
-    if (interval) {
-      clearInterval(interval);
-    }
+    // if (interval) {
+    //   cancelAnimationFrame(interval);
+    // }
 
-    const newInterval = setInterval(() => {
+    const newInterval = requestAnimationFrame(() => {
       this.newMoveDirection();
-    }, time);
+    });
 
     this.intervalNumber = newInterval;
   }
 
+  /**
+   * Keyboards key handler
+   */
   contolsKeyboard(event) {
     const key = event.keyCode || event.which;
     const currentDirection = this.moveDirection; // prevents movement of the snake through itself
@@ -192,7 +215,7 @@ export class Snake {
       this.moveDirection = 'bottom';
     }
 
-    this.restartInterval();
+    this.animateMove();
   }
 
   /**
@@ -200,18 +223,36 @@ export class Snake {
    * Where is food placed and where is now snake head
    * If they match - add to snake new part and re arrange food
    */
-  checkFood() {
+  // checkFood() {
+  //   const headYCoord = parseInt(this.element.style.top, 10);
+  //   const headXCoord = parseInt(this.element.style.left, 10);
+
+  //   const foodYCoord = food.getCurrentFoodPosition().foodYCoord;
+  //   const foodXCoord = food.getCurrentFoodPosition().foodXCoord;
+  //   if (headYCoord === foodYCoord && headXCoord === foodXCoord) {
+  //     // using snake tail coordinates, that remove when snake make one move
+  //     this.addNewSnakePart(this.snakeTail[0], this.snakeTail[1], this.element.parentNode.firstChild);
+  //     food.setFoodNewPosition();
+  //   }
+  // }
+
+  checkBoundaries() {
     const headYCoord = parseInt(this.element.style.top, 10);
     const headXCoord = parseInt(this.element.style.left, 10);
+    const snakePart = this.currentSnakePartsCoordinates();
 
-    const foodYCoord = food.getCurrentFoodPosition().foodYCoord;
-    const foodXCoord = food.getCurrentFoodPosition().foodXCoord;
-    if (headYCoord === foodYCoord && headXCoord === foodXCoord) {
-      // using snake tail coordinates, that remove when snake make one move
-      this.addNewSnakePart(this.snakeTail[0], this.snakeTail[1], this.element.parentNode.firstChild);
-      food.setFoodNewPosition();
+    snakePart.pop();
+
+    const levelSize = level.levelArea();
+    if (headYCoord < 0 || headXCoord < 0 || headXCoord > levelSize.width || headYCoord > levelSize.height) {
+      console.log('we broken');
     }
-    // if(head === food)
+
+    for (const i in snakePart) {
+      if (`${headXCoord}px` === snakePart[i][0] && `${headYCoord}px` === snakePart[i][1]) {
+        console.log('nam pizda');
+      }
+    }
   }
 
   setupControll() {
