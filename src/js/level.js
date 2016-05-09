@@ -8,10 +8,6 @@ export class Level {
     this.element = element;
   }
 
-  getLevel() {
-    return this.element;
-  }
-
   getLevelCoordinates() {
     return this.element.getBoundingClientRect();
   }

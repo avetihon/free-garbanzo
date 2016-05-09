@@ -1,3 +1,7 @@
+/**
+ * This class control all checks and snake movement
+ */
+
 const KEY_W = 87;
 const KEY_S = 83;
 const KEY_A = 65;
@@ -12,8 +16,33 @@ export class Engine {
   }
 
   startNewGame() {
+    const newFoodCoord = this.generateNewFoodCoordinates();
+
     this.snake.initNewSnake();
-    this.food.initNewFood();
+    this.food.initNewFood(newFoodCoord.foodXCoord, newFoodCoord.foodYCoord);
+    this.setupControll();
+  }
+
+
+  /* GAMEPLAY PART ***/
+
+  checkBoundaries() {
+    const snakeXCoord = this.snake.snakeHead.headXCoord;
+    const snakeYCoord = this.snake.snakeHead.headYCoord;
+    const snakePart = this.snake.currentSnakePartsCoordinates();
+    const levelSize = this.level.levelArea();
+
+    snakePart.pop();
+
+    if (snakeYCoord < 0 || snakeXCoord < 0 || snakeXCoord > levelSize.width || snakeYCoord > levelSize.height) {
+      console.log('we broken');
+    }
+
+    for (const i in snakePart) {
+      if (`${snakeXCoord}px` === snakePart[i][0] && `${snakeYCoord}px` === snakePart[i][1]) {
+        console.log('nam pizda');
+      }
+    }
   }
 
   /* FOOD PART ***/
@@ -33,8 +62,10 @@ export class Engine {
     if (snakeXCoord === foodXCoord && snakeYCoord === foodYCoord) {
       // using snake tail coordinates, that removes when snake make one move
 
+      const newFoodCoord = this.generateNewFoodCoordinates();
+
       this.snake.addToSnakeNewTail();
-      this.generateNewFoodCoordinates();
+      this.food.setToFoodNewPosition(newFoodCoord.foodXCoord, newFoodCoord.foodYCoord);
     }
   }
 
@@ -42,8 +73,8 @@ export class Engine {
     const levelArea = this.level.levelArea();
     const snakeParts = this.snake.currentSnakePartsCoordinates();
 
-    let foodXCoord = this.createRandomNumbers(0, levelArea.width);
-    let foodYCoord = this.createRandomNumbers(0, levelArea.height);
+    let foodXCoord = this.createRandomPixelNumbers(0, levelArea.width);
+    let foodYCoord = this.createRandomPixelNumbers(0, levelArea.height);
 
     for (const i in snakeParts) {
       if (foodXCoord === snakeParts[i][0]) {
@@ -55,7 +86,10 @@ export class Engine {
       }
     }
 
-    this.food.setToFoodNewPosition(foodXCoord, foodYCoord);
+    return {
+      foodXCoord,
+      foodYCoord,
+    };
   }
 
   /* MOVE PART ***/
@@ -68,6 +102,91 @@ export class Engine {
   // setup current snake movement direction
   set moveDirection(direction) {
     this.direction = direction;
+  }
+
+  /**
+   * Function controll snake direction move
+   */
+  newMoveDirection() {
+    const moveDirection = this.moveDirection;
+
+    const snakeXCoord = this.snake.snakeHead.headXCoord;
+    const snakeYCoord = this.snake.snakeHead.headYCoord;
+
+    switch (moveDirection) {
+      case 'top': {
+        this.snake.moveBody(snakeXCoord, snakeYCoord - 10);
+        break;
+      }
+      case 'bottom': {
+        this.snake.moveBody(snakeXCoord, snakeYCoord + 10);
+        break;
+      }
+      case 'left': {
+        this.snake.moveBody(snakeXCoord - 10, snakeYCoord);
+        break;
+      }
+      case 'right': {
+        this.snake.moveBody(snakeXCoord + 10, snakeYCoord);
+        break;
+      }
+      default: {
+        console.warn('Something wrong');
+      }
+    }
+
+    // after move check
+    this.checkIsSnakeEatFood();
+    this.checkBoundaries();
+  }
+
+  set requestNumber(interval) {
+    this.interval = interval;
+  }
+
+  get requestNumber() {
+    return this.interval;
+  }
+
+  get lastTime() {
+    let value;
+
+    if (!this.time) {
+      value = 0;
+    } else {
+      value = this.time;
+    }
+
+    return value;
+  }
+
+  set lastTime(time) {
+    this.time = time;
+  }
+
+  // clear current time interval and setup new
+  gameLoop() {
+    const requestID = this.requestNumber;
+
+    if (requestID) {
+      cancelAnimationFrame(requestID);
+    }
+
+    // request another frame
+    const newRequestID = requestAnimationFrame(() => this.gameLoop());
+
+    // calc elapsed time since last loop
+    const currentTime = Date.now();
+    const delta = currentTime - this.lastTime;
+
+    if (delta > (1000 / 8)) {
+
+      this.lastTime = currentTime - (delta % (1000 / 8));
+
+      this.newMoveDirection();
+      this.requestNumber = newRequestID;
+
+    }
   }
 
   /**
@@ -87,7 +206,7 @@ export class Engine {
       this.moveDirection = 'bottom';
     }
 
-    this.restartInterval();
+    requestAnimationFrame(() => this.gameLoop());
   }
 
   /**

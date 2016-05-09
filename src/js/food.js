@@ -13,14 +13,12 @@ export class Food {
    * Create new div, add to it the class, make append to level
    * And set random position
    */
-  initNewFood() {
+  initNewFood(foodXCoord, foodYCoord) {
     const foodElement = document.createElement('div');
     foodElement.className = 'level__food';
     this.food = foodElement;
     this.levelElement.appendChild(foodElement);
-    this.setToFoodNewPosition('10px', '120px');
-
-    return foodElement;
+    this.setToFoodNewPosition(foodXCoord, foodYCoord);
   }
 
   // get food element
