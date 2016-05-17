@@ -7,18 +7,23 @@ const KEY_S = 83;
 const KEY_A = 65;
 const KEY_D = 68;
 
+import { emmiter } from './event-emmiter.js';
+
 export class Engine {
 
-  constructor(level, snake, food) {
+  constructor(level, snake, food, settings) {
     this.level = level;
     this.snake = snake;
     this.food = food;
+    this.settings = settings;
   }
 
   startNewGame() {
+    this.level.createLevelPalette();
+    this.snake.initNewSnake();
     const newFoodCoord = this.generateNewFoodCoordinates();
 
-    this.snake.initNewSnake();
+
     this.food.initNewFood(newFoodCoord.foodXCoord, newFoodCoord.foodYCoord);
     this.setupControll();
   }
@@ -30,11 +35,11 @@ export class Engine {
     const snakeXCoord = this.snake.snakeHead.headXCoord;
     const snakeYCoord = this.snake.snakeHead.headYCoord;
     const snakePart = this.snake.currentSnakePartsCoordinates();
-    const levelSize = this.level.levelArea();
+    const [levelSizeWidth, levelSizeHeight] = this.level.levelArea();
 
     snakePart.pop();
 
-    if (snakeYCoord < 0 || snakeXCoord < 0 || snakeXCoord > levelSize.width || snakeYCoord > levelSize.height) {
+    if (snakeYCoord < 0 || snakeXCoord < 0 || snakeXCoord > levelSizeWidth || snakeYCoord > levelSizeHeight) {
       console.log('we broken');
     }
 
@@ -66,25 +71,49 @@ export class Engine {
 
       this.snake.addToSnakeNewTail();
       this.food.setToFoodNewPosition(newFoodCoord.foodXCoord, newFoodCoord.foodYCoord);
+      emmiter.emit('updateScores');
     }
   }
 
   generateNewFoodCoordinates() {
-    const levelArea = this.level.levelArea();
+    const arratOfLevelCoord = this.level.levelArrayOfCoordinates();
     const snakeParts = this.snake.currentSnakePartsCoordinates();
 
-    let foodXCoord = this.createRandomPixelNumbers(0, levelArea.width);
-    let foodYCoord = this.createRandomPixelNumbers(0, levelArea.height);
+    const snakePartsTwo = this.snake.currentSnakePartsCoordinatesTwo();
+
+    // console.log(arratOfLevelCoord)
+    const arrayOfEmptyCoordinates = arratOfLevelCoord.filter((item, i) => {
+      snakePartsTwo.forEach((snake) => {
+        // console.log(snake[0])
+        // console.log(item[0])
+        return item[0] !== snake[0] && item[1] !== snake[1];
+      });
+    });
+
+    // console.log(arrayOfEmptyCoordinates)
+
+
+
+    ////////////
+    const [levelSizeWidth, levelSizeHeight] = this.level.levelArea();
+
+
+    let foodXCoord = this.createRandomPixelNumbers(0, levelSizeWidth);
+    let foodYCoord = this.createRandomPixelNumbers(0, levelSizeHeight);
 
     for (const i in snakeParts) {
       if (foodXCoord === snakeParts[i][0]) {
-        foodXCoord = this.createRandomPixelNumbers(0, levelArea.width);
+        foodXCoord = this.createRandomPixelNumbers(0, levelSizeWidth);
       }
 
       if (foodYCoord === snakeParts[i][1]) {
-        foodYCoord = this.createRandomPixelNumbers(0, levelArea.height);
+        foodYCoord = this.createRandomPixelNumbers(0, levelSizeHeight);
       }
     }
+
+
+    // console.log(snakeParts)
+    // console.log(foodXCoord + ' ' + foodYCoord)
 
     return {
       foodXCoord,
@@ -115,19 +144,19 @@ export class Engine {
 
     switch (moveDirection) {
       case 'top': {
-        this.snake.moveBody(snakeXCoord, snakeYCoord - 10);
+        this.snake.moveBody(snakeXCoord, snakeYCoord - this.settings.componentSize());
         break;
       }
       case 'bottom': {
-        this.snake.moveBody(snakeXCoord, snakeYCoord + 10);
+        this.snake.moveBody(snakeXCoord, snakeYCoord + this.settings.componentSize());
         break;
       }
       case 'left': {
-        this.snake.moveBody(snakeXCoord - 10, snakeYCoord);
+        this.snake.moveBody(snakeXCoord - this.settings.componentSize(), snakeYCoord);
         break;
       }
       case 'right': {
-        this.snake.moveBody(snakeXCoord + 10, snakeYCoord);
+        this.snake.moveBody(snakeXCoord + this.settings.componentSize(), snakeYCoord);
         break;
       }
       default: {
@@ -140,14 +169,17 @@ export class Engine {
     this.checkBoundaries();
   }
 
-  set requestNumber(interval) {
+  /* GAME LOOP PART */
+
+  set requestNumberID(interval) {
     this.interval = interval;
   }
 
-  get requestNumber() {
+  get requestNumberID() {
     return this.interval;
   }
 
+  // get the last time create new frame
   get lastTime() {
     let value;
 
@@ -164,28 +196,46 @@ export class Engine {
     this.time = time;
   }
 
-  // clear current time interval and setup new
-  gameLoop() {
-    const requestID = this.requestNumber;
-
-    if (requestID) {
-      cancelAnimationFrame(requestID);
+  // prop for set or take off from pause
+  get isRunning() {
+    if (typeof this.running === 'undefined') {
+      this.running = true;
     }
 
+    return this.running;
+  }
+
+  set isRunning(running) {
+    this.running = running;
+  }
+
+  // clear current time interval and setup new
+  gameLoop() {
+    // const requestID = this.requestNumberID;
+
+    // if (requestID) {
+    //   cancelAnimationFrame(requestID);
+    // }
+
     // request another frame
-    const newRequestID = requestAnimationFrame(() => this.gameLoop());
+    // if (this.isRunning) {
+      // const newRequestID = requestAnimationFrame(() => this.gameLoop());
+    // }
+
+    if (this.isRunning) {
+      requestAnimationFrame(() => this.gameLoop());
+    }
 
     // calc elapsed time since last loop
     const currentTime = Date.now();
     const delta = currentTime - this.lastTime;
 
+    // if enough time has elapsed, draw the next frame
     if (delta > (1000 / 8)) {
-
       this.lastTime = currentTime - (delta % (1000 / 8));
 
       this.newMoveDirection();
-      this.requestNumber = newRequestID;
-
+      // this.requestNumberID = newRequestID;
     }
   }
 
@@ -209,6 +259,16 @@ export class Engine {
     requestAnimationFrame(() => this.gameLoop());
   }
 
+  pauseGame() {
+    if (this.isRunning) {
+      this.isRunning = false;
+    } else {
+      this.isRunning = true;
+      // at once start the snake movement
+      requestAnimationFrame(() => this.gameLoop());
+    }
+  }
+
   /**
    * Init event listener on keydown event
    **/
@@ -216,12 +276,13 @@ export class Engine {
     window.addEventListener('keydown', event => {
       this.contolsKeyboard(event);
     });
-  }
 
+    document.querySelector('.game__pause').addEventListener('click', () => { this.pauseGame(); });
+  }
   /* Util ***/
   createRandomPixelNumbers(min, max) {
     let number = Math.random() * (max - min);
-    number = number - number % 10;
+    number = number - number % this.settings.componentSize();
     return `${number}px`;
   }
 }

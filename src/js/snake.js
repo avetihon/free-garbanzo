@@ -4,8 +4,9 @@
 
 export class Snake {
 
-  constructor(levelElement) {
+  constructor(levelElement, settings) {
     this.levelElement = levelElement;
+    this.settings = settings;
   }
 
   initNewSnake() {
@@ -13,8 +14,8 @@ export class Snake {
 
     const snakeElement = document.createElement('div');
     snakeElement.className = 'snake__part snake__part--head';
-    snakeElement.style.top = '40px';
-    snakeElement.style.left = '40px';
+    snakeElement.style.top = '50px';
+    snakeElement.style.left = '150px';
 
     // append to level my snake
     this.levelElement.appendChild(snakeElement);
@@ -77,7 +78,7 @@ export class Snake {
     const snakeYCoord = this.snakeHead.headYCoord;
 
     while (i > 0) {
-      const newHeadXCoord = snakeXCoord - (i * 10);
+      const newHeadXCoord = snakeXCoord - (i * this.settings.componentSize());
       this.addNewSnakePart(`${newHeadXCoord}px`, `${snakeYCoord}px`, this.snake);
 
       i--;
@@ -100,6 +101,17 @@ export class Snake {
 
     for (const snake of Array.from(snakeParts)) {
       arrayOfCoordinates.push([snake.style.left, snake.style.top]);
+    }
+
+    return arrayOfCoordinates;
+  }
+
+  currentSnakePartsCoordinatesTwo() {
+    const snakeParts = document.querySelectorAll('.snake__part');
+    const arrayOfCoordinates = [];
+
+    for (const snake of Array.from(snakeParts)) {
+      arrayOfCoordinates.push([parseInt(snake.style.left, 10), parseInt(snake.style.top, 10)]);
     }
 
     return arrayOfCoordinates;

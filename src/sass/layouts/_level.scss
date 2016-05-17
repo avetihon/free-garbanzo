@@ -1,15 +1,60 @@
 .level {
   position: relative;
-  width: 300px;
-  height: 200px;
-  // border: 2px solid #fa803f;
-  outline: 2px solid #fa803f;
-  // box-sizing: initial;
+  width: 800px;
+  height: 450px;
+  outline: 4px solid #bf6f37;
+  z-index: $levelZindex;
+
+  &__palette {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    &-table {
+      border-collapse: collapse;
+    }
+
+    &-element {
+      width: 50px;
+      height: 50px;
+
+      &--light {
+        background-color: $boardColorLightGreen;
+      }
+
+      &--dark {
+        background-color: $boardColorDarkGreen;
+      }
+    }
+  }
+
+  &__food {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background-image: url(./../images/fruite.png);
+    background-repeat: no-repeat;
+    background-position: center;
+  }
 }
 
-.level__food {
-  position: absolute;
-  width: 10px;
-  height: 10px;
-  background-color: red;
+.game {
+  &__scores {
+    position: absolute;
+    top: -50px;
+    left: 0;
+    font-size: 2em;
+  }
+
+  &__pause {
+    position: absolute;
+    top: 0;
+    right: -72px;
+    width: 57px;
+    height: 57px;
+    display: inline-block;
+    background-image: url(./../images/pause.png);
+    background-repeat: no-repeat;
+    background-position: center;
+  }
 }
