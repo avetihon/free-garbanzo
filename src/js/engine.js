@@ -2,12 +2,8 @@
  * This class control all checks and snake movement
  */
 
-const KEY_W = 87;
-const KEY_S = 83;
-const KEY_A = 65;
-const KEY_D = 68;
-
 import { emmiter } from './event-emmiter.js';
+import _ from 'lodash';
 
 export class Engine {
 
@@ -21,10 +17,8 @@ export class Engine {
   startNewGame() {
     this.level.createLevelPalette();
     this.snake.initNewSnake();
-    const newFoodCoord = this.generateNewFoodCoordinates();
-
-
-    this.food.initNewFood(newFoodCoord.foodXCoord, newFoodCoord.foodYCoord);
+    const foodCoord = this.generateNewFoodCoordinates();
+    this.food.initNewFood(foodCoord.x, foodCoord.y);
     this.setupControll();
   }
 
@@ -32,20 +26,24 @@ export class Engine {
   /* GAMEPLAY PART ***/
 
   checkBoundaries() {
-    const snakeXCoord = this.snake.snakeHead.headXCoord;
-    const snakeYCoord = this.snake.snakeHead.headYCoord;
+    const snakeXCoord = this.snake.snakeHead.x;
+    const snakeYCoord = this.snake.snakeHead.y;
     const snakePart = this.snake.currentSnakePartsCoordinates();
-    const [levelSizeWidth, levelSizeHeight] = this.level.levelArea();
+    const { width, height } = this.level.levelArea();
 
+    // remove snake head coordinates
     snakePart.pop();
 
-    if (snakeYCoord < 0 || snakeXCoord < 0 || snakeXCoord > levelSizeWidth || snakeYCoord > levelSizeHeight) {
-      console.log('we broken');
+    if (snakeYCoord < 0
+     || snakeXCoord < 0
+     || snakeXCoord > width
+     || snakeYCoord > height) {
+      console.log('Game Over');
     }
 
     for (const i in snakePart) {
-      if (`${snakeXCoord}px` === snakePart[i][0] && `${snakeYCoord}px` === snakePart[i][1]) {
-        console.log('nam pizda');
+      if (snakeXCoord === snakePart[i].x && snakeYCoord === snakePart[i].y) {
+        console.log('Game Over');
       }
     }
   }
@@ -58,67 +56,31 @@ export class Engine {
    * If they match - add to snake new part and re-arrange food
    */
   checkIsSnakeEatFood() {
-    const snakeXCoord = this.snake.snakeHead.headXCoord;
-    const snakeYCoord = this.snake.snakeHead.headYCoord;
+    const snakeXCoord = this.snake.snakeHead.x;
+    const snakeYCoord = this.snake.snakeHead.y;
 
-    const foodXCoord = this.food.getFoodPosition().foodXCoord;
-    const foodYCoord = this.food.getFoodPosition().foodYCoord;
+    const foodXCoord = this.food.getFoodPosition().x;
+    const foodYCoord = this.food.getFoodPosition().y;
 
     if (snakeXCoord === foodXCoord && snakeYCoord === foodYCoord) {
-      // using snake tail coordinates, that removes when snake make one move
+      // using snake tail coordinates, that removes when snake make one step
 
       const newFoodCoord = this.generateNewFoodCoordinates();
 
       this.snake.addToSnakeNewTail();
-      this.food.setToFoodNewPosition(newFoodCoord.foodXCoord, newFoodCoord.foodYCoord);
+      this.food.setToFoodNewPosition(newFoodCoord.x, newFoodCoord.y);
       emmiter.emit('updateScores');
     }
   }
 
   generateNewFoodCoordinates() {
-    const arratOfLevelCoord = this.level.levelArrayOfCoordinates();
-    const snakeParts = this.snake.currentSnakePartsCoordinates();
+    const levelCoordinates = this.level.levelCoordinates();
+    const snakeCoordinates = this.snake.currentSnakePartsCoordinates();
 
-    const snakePartsTwo = this.snake.currentSnakePartsCoordinatesTwo();
+    const res = _.differenceWith(levelCoordinates, snakeCoordinates, _.isEqual);
+    const randomCoordinate = Math.floor((Math.random() * res.length) + 1);
 
-    // console.log(arratOfLevelCoord)
-    const arrayOfEmptyCoordinates = arratOfLevelCoord.filter((item, i) => {
-      snakePartsTwo.forEach((snake) => {
-        // console.log(snake[0])
-        // console.log(item[0])
-        return item[0] !== snake[0] && item[1] !== snake[1];
-      });
-    });
-
-    // console.log(arrayOfEmptyCoordinates)
-
-
-
-    ////////////
-    const [levelSizeWidth, levelSizeHeight] = this.level.levelArea();
-
-
-    let foodXCoord = this.createRandomPixelNumbers(0, levelSizeWidth);
-    let foodYCoord = this.createRandomPixelNumbers(0, levelSizeHeight);
-
-    for (const i in snakeParts) {
-      if (foodXCoord === snakeParts[i][0]) {
-        foodXCoord = this.createRandomPixelNumbers(0, levelSizeWidth);
-      }
-
-      if (foodYCoord === snakeParts[i][1]) {
-        foodYCoord = this.createRandomPixelNumbers(0, levelSizeHeight);
-      }
-    }
-
-
-    // console.log(snakeParts)
-    // console.log(foodXCoord + ' ' + foodYCoord)
-
-    return {
-      foodXCoord,
-      foodYCoord,
-    };
+    return res[randomCoordinate];
   }
 
   /* MOVE PART ***/
@@ -139,24 +101,24 @@ export class Engine {
   newMoveDirection() {
     const moveDirection = this.moveDirection;
 
-    const snakeXCoord = this.snake.snakeHead.headXCoord;
-    const snakeYCoord = this.snake.snakeHead.headYCoord;
+    const snakeXCoord = this.snake.snakeHead.x;
+    const snakeYCoord = this.snake.snakeHead.y;
 
     switch (moveDirection) {
       case 'top': {
-        this.snake.moveBody(snakeXCoord, snakeYCoord - this.settings.componentSize());
+        this.snake.moveBody(snakeXCoord, snakeYCoord - this.settings.componentSize);
         break;
       }
       case 'bottom': {
-        this.snake.moveBody(snakeXCoord, snakeYCoord + this.settings.componentSize());
+        this.snake.moveBody(snakeXCoord, snakeYCoord + this.settings.componentSize);
         break;
       }
       case 'left': {
-        this.snake.moveBody(snakeXCoord - this.settings.componentSize(), snakeYCoord);
+        this.snake.moveBody(snakeXCoord - this.settings.componentSize, snakeYCoord);
         break;
       }
       case 'right': {
-        this.snake.moveBody(snakeXCoord + this.settings.componentSize(), snakeYCoord);
+        this.snake.moveBody(snakeXCoord + this.settings.componentSize, snakeYCoord);
         break;
       }
       default: {
@@ -170,14 +132,6 @@ export class Engine {
   }
 
   /* GAME LOOP PART */
-
-  set requestNumberID(interval) {
-    this.interval = interval;
-  }
-
-  get requestNumberID() {
-    return this.interval;
-  }
 
   // get the last time create new frame
   get lastTime() {
@@ -209,19 +163,8 @@ export class Engine {
     this.running = running;
   }
 
-  // clear current time interval and setup new
+  // controll game loop
   gameLoop() {
-    // const requestID = this.requestNumberID;
-
-    // if (requestID) {
-    //   cancelAnimationFrame(requestID);
-    // }
-
-    // request another frame
-    // if (this.isRunning) {
-      // const newRequestID = requestAnimationFrame(() => this.gameLoop());
-    // }
-
     if (this.isRunning) {
       requestAnimationFrame(() => this.gameLoop());
     }
@@ -235,7 +178,6 @@ export class Engine {
       this.lastTime = currentTime - (delta % (1000 / 8));
 
       this.newMoveDirection();
-      // this.requestNumberID = newRequestID;
     }
   }
 
@@ -246,13 +188,13 @@ export class Engine {
     const key = event.keyCode || event.which;
     const currentDirection = this.moveDirection; // prevents movement of the snake through itself
 
-    if (key === KEY_A && currentDirection !== 'right') {
+    if (key === this.settings.keyA && currentDirection !== 'right') {
       this.moveDirection = 'left';
-    } else if (key === KEY_D && currentDirection !== 'left') {
+    } else if (key === this.settings.keyD && currentDirection !== 'left') {
       this.moveDirection = 'right';
-    } else if (key === KEY_W && currentDirection !== 'top') {
+    } else if (key === this.settings.keyW && currentDirection !== 'top') {
       this.moveDirection = 'top';
-    } else if (key === KEY_S && currentDirection !== 'bottom') {
+    } else if (key === this.settings.keyS && currentDirection !== 'bottom') {
       this.moveDirection = 'bottom';
     }
 
@@ -278,11 +220,5 @@ export class Engine {
     });
 
     document.querySelector('.game__pause').addEventListener('click', () => { this.pauseGame(); });
-  }
-  /* Util ***/
-  createRandomPixelNumbers(min, max) {
-    let number = Math.random() * (max - min);
-    number = number - number % this.settings.componentSize();
-    return `${number}px`;
   }
 }

@@ -4,20 +4,18 @@
 
 export class Level {
 
-  constructor(element, settings) {
-    this.element = element;
+  constructor(settings) {
     this.settings = settings;
   }
 
-  getLevelCoordinates() {
-    return this.element.getBoundingClientRect();
-  }
-
   levelArea() {
-    const width = this.getLevelCoordinates().right - this.getLevelCoordinates().left;
-    const height = this.getLevelCoordinates().bottom - this.getLevelCoordinates().top;
+    const width = this.settings.levelSizeByComponent.x * this.settings.componentSize;
+    const height = this.settings.levelSizeByComponent.y * this.settings.componentSize;
 
-    return [width, height];
+    return {
+      width,
+      height,
+    };
   }
 
   /**
@@ -30,10 +28,10 @@ export class Level {
 
     levelPalletteTable.className = 'level__palette-table';
 
-    for (let i = 0; i < 9; i++) {
+    for (let i = 0; i < this.settings.levelSizeByComponent.y; i++) {
       const levelPaletteTR = document.createElement('tr');
 
-      for (let j = 0; j < 16; j++) {
+      for (let j = 0; j < this.settings.levelSizeByComponent.x; j++) {
         const levelPaletteTD = document.createElement('td');
 
         if (i % 2 === j % 2) {
@@ -51,12 +49,14 @@ export class Level {
     levelPalette.appendChild(levelPalletteTable);
   }
 
-  levelArrayOfCoordinates() {
-    const [levelSizeWidth, levelSizeHeight] = this.levelArea();
+  levelCoordinates() {
     const arrayOfCoordinates = [];
-    for (let i = 0; i < levelSizeHeight; i += this.settings.componentSize()) {
-      for (let j = 0; j < levelSizeWidth; j += this.settings.componentSize()) {
-        arrayOfCoordinates.push([i, j]);
+    for (let i = 0; i < this.settings.levelSizeByComponent.y; i++) {
+      for (let j = 0; j < this.settings.levelSizeByComponent.x; j++) {
+        arrayOfCoordinates.push({
+          x: j * this.settings.componentSize,
+          y: i * this.settings.componentSize,
+        });
       }
     }
 

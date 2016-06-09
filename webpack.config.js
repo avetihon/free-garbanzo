@@ -25,9 +25,10 @@ module.exports = {
       },
     ],
   },
-  postcss: () => {
-    return [autoprefixer];
+  resolve: {
+    modulesDirectories: ['node_modules'],
   },
+  postcss: () => [autoprefixer],
   watch: true,
   devServer: {
     port: 3000,

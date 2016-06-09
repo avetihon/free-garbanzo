@@ -4,20 +4,18 @@
 
 export class Food {
 
-  constructor(levelElement) {
-    this.levelElement = levelElement;
-  }
-
   /**
    * Initialize new food
-   * Create new div, add to it the class, make append to level
+   * Create new div, add a class to new element, appending to level element
    * And set random position
    */
   initNewFood(foodXCoord, foodYCoord) {
     const foodElement = document.createElement('div');
+    const level = document.querySelector('.level');
+
     foodElement.className = 'level__food';
     this.food = foodElement;
-    this.levelElement.appendChild(foodElement);
+    level.appendChild(foodElement);
     this.setToFoodNewPosition(foodXCoord, foodYCoord);
   }
 
@@ -32,12 +30,12 @@ export class Food {
   }
 
   /**
-   * Setup new food position using Level func, that get level area
+   * Setup new food position
    */
   setToFoodNewPosition(foodXCoord, foodYCoord) {
     this.food.style.display = 'none';
-    this.food.style.left = foodXCoord;
-    this.food.style.top = foodYCoord;
+    this.food.style.left = `${foodXCoord}px`;
+    this.food.style.top = `${foodYCoord}px`;
     this.food.style.display = 'block';
   }
 
@@ -46,8 +44,8 @@ export class Food {
     const foodYCoord = parseInt(this.food.style.top, 10);
 
     return {
-      foodXCoord,
-      foodYCoord,
+      x: foodXCoord,
+      y: foodYCoord,
     };
   }
 }

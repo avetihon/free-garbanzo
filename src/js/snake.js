@@ -4,8 +4,7 @@
 
 export class Snake {
 
-  constructor(levelElement, settings) {
-    this.levelElement = levelElement;
+  constructor(settings) {
     this.settings = settings;
   }
 
@@ -13,12 +12,13 @@ export class Snake {
     // create new div with some attr
 
     const snakeElement = document.createElement('div');
+    const level = document.querySelector('.level');
     snakeElement.className = 'snake__part snake__part--head';
     snakeElement.style.top = '50px';
     snakeElement.style.left = '150px';
 
-    // append to level my snake
-    this.levelElement.appendChild(snakeElement);
+    // append a snake to the level
+    level.appendChild(snakeElement);
 
     // create reference on current snake element
     this.snake = snakeElement;
@@ -53,8 +53,8 @@ export class Snake {
     const headYCoord = parseInt(this.snake.style.top, 10);
 
     return {
-      headXCoord,
-      headYCoord,
+      x: headXCoord,
+      y: headYCoord,
     };
   }
 
@@ -64,8 +64,8 @@ export class Snake {
   addNewSnakePart(coordX, coordY, element) {
     const snakePart = document.createElement('div');
     snakePart.className = 'snake__part';
-    snakePart.style.top = coordY;
-    snakePart.style.left = coordX;
+    snakePart.style.top = `${coordY}px`;
+    snakePart.style.left = `${coordX}px`;
     this.snake.parentNode.insertBefore(snakePart, element);
   }
 
@@ -74,12 +74,12 @@ export class Snake {
    **/
   initSnakeBody(partCount) {
     let i = partCount;
-    const snakeXCoord = this.snakeHead.headXCoord;
-    const snakeYCoord = this.snakeHead.headYCoord;
+    const snakeXCoord = this.snakeHead.x;
+    const snakeYCoord = this.snakeHead.y;
 
     while (i > 0) {
-      const newHeadXCoord = snakeXCoord - (i * this.settings.componentSize());
-      this.addNewSnakePart(`${newHeadXCoord}px`, `${snakeYCoord}px`, this.snake);
+      const newHeadXCoord = snakeXCoord - (i * this.settings.componentSize);
+      this.addNewSnakePart(newHeadXCoord, snakeYCoord, this.snake);
 
       i--;
     }
@@ -89,48 +89,41 @@ export class Snake {
    * Add to snake new tail when snake eat food
    **/
   addToSnakeNewTail() {
-    this.addNewSnakePart(this.snakeTail[0], this.snakeTail[1], this.snake.parentNode.firstChild);
+    this.addNewSnakePart(this.snakeTail.x, this.snakeTail.y, this.snake.parentNode.firstChild);
   }
 
   /**
    * Function return all current snake coordinates
    */
+
   currentSnakePartsCoordinates() {
     const snakeParts = document.querySelectorAll('.snake__part');
     const arrayOfCoordinates = [];
 
     for (const snake of Array.from(snakeParts)) {
-      arrayOfCoordinates.push([snake.style.left, snake.style.top]);
-    }
-
-    return arrayOfCoordinates;
-  }
-
-  currentSnakePartsCoordinatesTwo() {
-    const snakeParts = document.querySelectorAll('.snake__part');
-    const arrayOfCoordinates = [];
-
-    for (const snake of Array.from(snakeParts)) {
-      arrayOfCoordinates.push([parseInt(snake.style.left, 10), parseInt(snake.style.top, 10)]);
+      arrayOfCoordinates.push({
+        x: parseInt(snake.style.left, 10),
+        y: parseInt(snake.style.top, 10),
+      });
     }
 
     return arrayOfCoordinates;
   }
 
   /**
-   * Function that controll moving all snake part
+   * Function that controll moves of all the snake parts
    */
   moveBody(posX, posY) {
     const snakeParts = document.querySelectorAll('.snake__part');
     const arrayOfCoordinates = this.currentSnakePartsCoordinates();
 
-    arrayOfCoordinates.push([`${posX}px`, `${posY}px`]);
+    arrayOfCoordinates.push({ x: posX, y: posY });
     this.snakeTail = arrayOfCoordinates.shift();
 
     // change the old coordinates to the new
     for (let i = 0; i < snakeParts.length; i++) {
-      snakeParts[i].style.left = arrayOfCoordinates[i][0];
-      snakeParts[i].style.top = arrayOfCoordinates[i][1];
+      snakeParts[i].style.left = `${arrayOfCoordinates[i].x}px`;
+      snakeParts[i].style.top = `${arrayOfCoordinates[i].y}px`;
     }
   }
 }

@@ -21,9 +21,9 @@ class EventEmitter {
 
     if (listeners && listeners.length) {
       index = listeners.reduce((i, listener, index) => {
-        return (this.ifFunction(listener) && listener === callback) ?
-          i = index :
-          i;
+        return (this.ifFunction(listener) && listener === callback)
+          ? i = index
+          : i;
       }, -1);
 
       if (index > -1) {
