@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "es6",
+    "moduleResolution": "classic",
+    "declaration": false,
+    "emitBOM": true,
+    "listFiles": false,
+    "locale": "en-us",
+    "newLine": "LF",
+    "noResolve": true,
+    "noEmitHelpers": true,
+    "noEmitOnError": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "outDir": "./develop",
+    "pretty": true,
+    "removeComments": false,
+    "rootDir": ".",
+    "watch": true,
+    "allowJs": false,
+    "sourceMap": true,
+    "stripInternal": true
+  },
+  "include": [
+    "public/**/*"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

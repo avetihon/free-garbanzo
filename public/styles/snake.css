@@ -1,0 +1,5 @@
+.snake {}
+.snake--style {
+  position: absolute;
+  background-color: var(--snake-head-color);
+}

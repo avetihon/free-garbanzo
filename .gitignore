@@ -38,13 +38,11 @@ Thumbs.db
 
 # Library folder #
 ##################
-node_modules/*
-.sass-cache
+node_modules/
 
 # Text editor project files #
 #############################
-*.sublime-project
-*.sublime-workspace
+.idea/
 
 # Project files #
 #################

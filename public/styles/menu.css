@@ -1,0 +1,7 @@
+.menu--style {
+  color: var(--menu-font-color);
+}
+
+.menu__title {
+  text-transform: uppercase;
+}

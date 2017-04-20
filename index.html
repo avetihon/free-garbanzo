@@ -1,22 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Bug free garbanzo</title>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,900" rel="stylesheet">
+    <link rel="stylesheet" href="./node_modules/normalize.css/normalize.css">
+    <link rel="stylesheet" href="./public/styles/colors.css">
+    <link rel="stylesheet" href="./public/styles/common.css">
+    <link rel="stylesheet" href="./public/styles/menu.css">
+    <link rel="stylesheet" href="./public/styles/location.css">
+    <link rel="stylesheet" href="./public/styles/snake.css">
 </head>
 <body>
-  <div class="menu menu__wrapper">
-    <h2 class="menu__logo">Bug free garbanzo</h2>
-    <!-- <img class="menu__image" src="" alt="snake-image"> -->
-    <div class="menu__wrapper-button">
-      <a href="./src/templates/level.html" class="menu__button-link">
-        <button type="button" class="menu__button menu__button--start">New game</button>
-        <span class="menu__cactus"></span>
-        <span class="menu__button-hidden"></span>
-      </a>
-      <button type="button" class="menu__button menu__button--settings">Settings</button>
-    </div>
-  </div>
-  <script src="./dist/bundle.js"></script>
+    <section class="menu menu--style">
+        <h1 class="menu__title">1</h1>
+        <h3 class="menu__item js-menu--new-game">new</h3>
+        <h3 class="menu__item js-menu--options">Options</h3>
+    </section>
+    <section class="game"></section>
+    <script src="./develop/develop.bundle.js"></script>
 </body>
 </html>

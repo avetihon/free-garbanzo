@@ -1,36 +1,23 @@
-const autoprefixer = require('autoprefixer');
+'use strict';
 
 module.exports = {
-  entry: './src/js/main.js',
-  output: {
-    publicPath: './dist/',
-    path: `${__dirname}/dist`,
-    filename: 'bundle.js',
-  },
-  devtool: 'source-map',
-  module: {
-    loaders: [
-      {
-        test: /\.(png|woff|woff2|eot|ttf|svg|jpg)$/,
-        loader: 'url-loader?limit=100000',
-      },
-      {
-        test: /\.scss$/,
-        loader: 'style!css!postcss!sass',
-      },
-      {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        loader: 'babel-loader',
-      },
-    ],
-  },
-  resolve: {
-    modulesDirectories: ['node_modules'],
-  },
-  postcss: () => [autoprefixer],
-  watch: true,
-  devServer: {
-    port: 3000,
-  },
+    entry: {
+        'app': './public/Main.ts'
+    },
+    output: {
+        filename: './develop/develop.bundle.js'
+    },
+    resolve: {
+        extensions: ['.ts', '.js']
+    },
+    devtool: 'source-map',
+    module: {
+        rules: [
+            {
+                test: /\.ts$/,
+                loader: 'awesome-typescript-loader',
+                options: { configFileName: 'develop.tsconfig.json' }
+            },
+        ]
+    }
 };
