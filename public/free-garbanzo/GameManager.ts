@@ -5,21 +5,19 @@ import Snake from "./Snake";
 import {ISnake} from "./models/ISnake";
 import CoordinatesMoveList from "./config/CoordinatesMoveList";
 import GameObjectList from "./GameObjectList";
+import {IGameObjectList} from "./models/IGameObjectList";
+import Engine from "./Engine";
+import ControlManager from "./ControlManager";
+import Level from "./Level";
 
 
 class GameManager implements IGameManager {
     public configuration: IConfiguration;
     public positionManager: PositionManager;
-    public gameObjectList: any;
-    public coordinatesMoveList: any;
+    public gameObjectList: GameObjectList;
+
     public constructor(configuration: IConfiguration) {
         this.configuration = configuration;
-    }
-
-    public createCoordinatesMoveList(): this {
-        this.coordinatesMoveList = new CoordinatesMoveList(this.configuration).getCoordinatesMoveList();
-
-        return this;
     }
 
     public createPositionManager(): this {
@@ -34,26 +32,20 @@ class GameManager implements IGameManager {
         return this;
     }
 
-    public createSnake(): this {
-        var snake: ISnake;
-        var playerNumber = this.configuration.playersNumber;
-        var i: number;
-        for (i = 0; i < playerNumber; i += 1) {
-            snake = new Snake(1, this.configuration);
-            snake.setCoordinatesMoveList(this.coordinatesMoveList);
-
-            this.gameObjectList.add(snake);
-        }
-        return this;
-    }
-
     public createLevel(): this {
+        var level: Level = new Level(this.configuration, this.positionManager, this.gameObjectList);
+        level.create();
 
         return this;
     }
 
     public createEngine(): this {
 
+        var engine: Engine = new Engine(this.configuration, this.gameObjectList);
+        engine.create();
+
+        var controlManager: ControlManager = new ControlManager(engine);
+        controlManager.create();
         return this;
     }
 }

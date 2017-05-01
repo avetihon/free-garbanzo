@@ -1,51 +1,71 @@
 import {IConfiguration} from "./models/IConfiguration";
+import {IGameObjectList} from "./models/IGameObjectList";
+import GameObjectList from "./GameObjectList";
+import {IBoard} from "./models/IBoard";
+import Board from "./Board";
 import {ISnake} from "./models/ISnake";
 import Snake from "./Snake";
+import PositionManager from "./PositionManager";
+import CoordinatesMoveList from "./config/CoordinatesMoveList";
+import {ICoordinates} from "./models/ICoordinates";
+
 
 class Level {
-    public winCondition: number;
-    public rootElement: Element;
-    public playersNumber: number;
     public configuration: IConfiguration;
+    public positionManager: PositionManager;
+    public rootElement: Element;
+
+    public board: IBoard;
     public gameObjectList: any;
-    public coordinatesMoveList: any;
-    public constructor(configuration: IConfiguration, gameObjectList: any, coordinatesMoveList: any) {
+    public constructor(configuration: IConfiguration, positionManager: PositionManager, gameObjectList: IGameObjectList) {
         this.configuration = configuration;
-        this.playersNumber = configuration.playersNumber;
+        this.positionManager = positionManager;
+
         this.rootElement = configuration.rootElement;
         this.gameObjectList = gameObjectList;
-        this.coordinatesMoveList = coordinatesMoveList;
     }
 
     public nextLevel(): void {
 
     }
 
-    public removeLocation(): void {
-        while (this.rootElement.firstChild) {
-            this.rootElement.removeChild(this.rootElement.firstChild);
-        }
+    public createBoard(): void {
+        this.board = new Board(this.configuration);
+        this.board.create();
     }
 
-    public createSnake(): this {
+    public createSnake(): void {
+        var coordinatesMoveList = new CoordinatesMoveList(this.configuration).getCoordinatesMoveList();
         var snake: ISnake;
-        var playerNumber = this.playersNumber;
-        var i: number;
-        for (i = 0; i < playerNumber; i += 1) {
-            snake = new Snake(1, this.configuration);
-            snake.setCoordinatesMoveList(this.coordinatesMoveList);
 
+        var i: number;
+        var len: number;
+        for (i = 1, len = this.configuration.playersNumber; i <= len; i += 1) {
+            var {startCoordinates, direction} = this.positionManager.getSnakePosition(i);
+            snake = new Snake(i, this.configuration);
+            snake.setCoordinatesMoveList(coordinatesMoveList);
+            snake.setStartPosition(startCoordinates, direction);
             this.gameObjectList.add(snake);
         }
-        return this;
     }
 
-    public createBoard(): void {
-
+    public createGameObjects(): void {
+        var i: number;
+        var len: number;
+        var gameObject: any;
+        var gameObjectKey: string;
+        var gameObjectKeys: string[] = Object.keys(this.gameObjectList.getList());
+        for (i = 0, len = gameObjectKeys.length; i < len; i += 1) {
+            gameObjectKey = gameObjectKeys[i];
+            gameObject = this.gameObjectList.getList()[gameObjectKey];
+            gameObject.create();
+        }
     }
 
     public create(): void {
-
+        this.createBoard();
+        this.createSnake();
+        this.createGameObjects();
     }
 }
 

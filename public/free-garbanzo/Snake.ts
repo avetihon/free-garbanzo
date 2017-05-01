@@ -20,10 +20,6 @@ class Snake implements ISnake {
         this.elementsHTML = [];
     }
 
-    public getSnakeIdNumber(): number {
-        return Number.parseInt(this.id.replace(Snake.PREFIX, ''));
-    }
-
     public static getSnakeIdBy(player: number) {
         return Snake.PREFIX + player;
     }
@@ -34,6 +30,20 @@ class Snake implements ISnake {
 
     public setCoordinatesMoveList(coordinatesMoveList: any): void {
         this.coordinatesMoveList = coordinatesMoveList;
+    }
+
+    public setStartPosition(startCoordinates: ICoordinates, direction: string): void {
+        var coordinatesNext: ICoordinates = this.coordinatesMoveList[direction];
+        var i: number;
+        var len: number;
+        for (i = 0, len = this.size; i < len; i += 1) {
+            this.elements.push({
+                x: startCoordinates.x + (i * coordinatesNext.x),
+                y: startCoordinates.y + (i * coordinatesNext.y)
+            });
+        }
+
+        this.direction = direction;
     }
 
     public createSnakeBody(): void {

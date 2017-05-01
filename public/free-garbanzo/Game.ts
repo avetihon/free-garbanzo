@@ -35,7 +35,7 @@ class Game {
             blockSize: 10,
             boardWidth: 100,
             boardHeight: 100,
-            playersNumber: 1,
+            playersNumber: 2,
             snakeDefaultSize: 3,
             boardIdentifier: getShortUID('board'),
             rootElement: document.querySelector('.game'),
@@ -45,34 +45,33 @@ class Game {
         var gameManager: IGameManager = new GameManager(configuration);
 
         gameManager
-            .createCoordinatesMoveList()
-            .createGameObjectList()
             .createPositionManager()
+            .createGameObjectList()
             .createLevel()
             .createEngine();
 
 
 
-        var coordinatesMoveList = new CoordinatesMoveList(configuration).getCoordinatesMoveList();
-
-
-        var board = new Board(configuration);
-        board.create();
-
-        var snake = new Snake(1, configuration);
-        snake.coordinatesMoveList = coordinatesMoveList;
-
-        var positionManager: PositionManager = new PositionManager(configuration);
-        positionManager.setSnakePosition(snake);
-
-        var gameObjectList: GameObjectList = new GameObjectList();
-        gameObjectList.add(snake);
-
-        var engine: Engine = new Engine(configuration, gameObjectList);
-        engine.create();
-
-        var controlManager: ControlManager = new ControlManager(engine);
-        controlManager.create();
+        // var coordinatesMoveList = new CoordinatesMoveList(configuration).getCoordinatesMoveList();
+        //
+        //
+        // var board = new Board(configuration);
+        // board.create();
+        //
+        // var snake = new Snake(1, configuration);
+        // snake.coordinatesMoveList = coordinatesMoveList;
+        //
+        // var positionManager: PositionManager = new PositionManager(configuration);
+        // positionManager.setSnakePosition(snake);
+        //
+        // var gameObjectList: GameObjectList = new GameObjectList();
+        // gameObjectList.add(snake);
+        //
+        // var engine: Engine = new Engine(configuration, gameObjectList);
+        // engine.create();
+        //
+        // var controlManager: ControlManager = new ControlManager(engine);
+        // controlManager.create();
     }
 }
 

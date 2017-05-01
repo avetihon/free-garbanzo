@@ -17,25 +17,6 @@ class PositionManager {
         this.generateVirtualBoard();
     }
 
-    public setSnakePosition(snake: Snake): this {
-        var snakeNumber: number = snake.getSnakeIdNumber();
-        var coordinatesMoveList: any = snake.coordinatesMoveList;
-        var {startCoordinates, direction} = this.getSnakePosition(snakeNumber);
-        var coordinatesNext: ICoordinates = coordinatesMoveList[direction];
-
-        var i: number;
-        var len: number;
-        for (i = 0, len = snake.size; i < len; i += 1) {
-            snake.elements.push({
-                x: startCoordinates.x + (i * coordinatesNext.x),
-                y: startCoordinates.y + (i * coordinatesNext.y)
-            });
-        }
-
-        snake.direction = direction;
-        return this;
-    }
-
     public generateVirtualBoard(): void {
         this.virtualBoard = [];
         for (let column = 0, len = this.configuration.boardHeight / this.configuration.blockSize; column < len; column += 1) {
@@ -62,8 +43,8 @@ class PositionManager {
             case 2: {
                 direction = this.directionList[getRandomValue(2, 3)];
                 startCoordinates = {
-                    x: (this.configuration.boardWidth - 1) * this.configuration.blockSize,
-                    y: (this.configuration.boardHeight - 1) * this.configuration.blockSize
+                    x: (this.configuration.boardWidth - this.configuration.blockSize * 2),
+                    y: (this.configuration.boardHeight - this.configuration.blockSize * 2)
                 };
                 break;
             }

@@ -1,11 +1,11 @@
 import ControlList from "./config/ControlList";
 import {IConfiguration} from "./models/IConfiguration";
 import DirectionList from "./config/DirectionList";
-import GameObjectList from "./GameObjectList";
 import GameStateList from "./config/GameStateList";
 import {ISnake} from "./models/ISnake";
 import Snake from "./Snake";
 import PlayerList from "./config/PlayerList";
+import {IGameObjectList} from "./models/IGameObjectList";
 
 class Engine {
     public configuration: IConfiguration;
@@ -17,10 +17,9 @@ class Engine {
     public direction: string;
     public gameObjectList: any;
     public player: number;
-    public constructor(configuration: IConfiguration, gameObjectList: GameObjectList) {
+    public constructor(configuration: IConfiguration, gameObjectList: IGameObjectList) {
         this.configuration = configuration;
         this.gameObjectList = gameObjectList.getList();
-        this.player = 1;
     }
 
     /*@TODO Refactoring */
@@ -45,8 +44,12 @@ class Engine {
     public snakeMovement(): void {
         // както получаем змейку ???
 
-        var snake: ISnake = this.gameObjectList[Snake.getSnakeIdBy(this.player)];
-        snake.nextMove();
+        var i: number;
+        var len: number;
+        for (i = 1, len = this.configuration.playersNumber; i <= len; i += 1) {
+            var snake: ISnake = this.gameObjectList[Snake.getSnakeIdBy(i)];
+            snake.nextMove();
+        }
     }
 
     public pause(): void {
@@ -101,21 +104,7 @@ class Engine {
         this.pause();
     }
 
-    public createGameObjects(): void {
-        var i: number;
-        var len: number;
-        var gameObject: any;
-        var gameObjectKey: string;
-        var gameObjectKeys: string[] = Object.keys(this.gameObjectList);
-        for (i = 0, len = gameObjectKeys.length; i < len; i += 1) {
-            gameObjectKey = gameObjectKeys[i];
-            gameObject = this.gameObjectList[gameObjectKey];
-            gameObject.create();
-        }
-    }
-
     public create(): void {
-        this.createGameObjects();
         this.startAnimation();
     }
 }

@@ -17,11 +17,11 @@ class Board implements IBoard {
         this.rootElement = configuration.rootElement;
     }
 
-    public createBoard(): void {
+    public createElement(): void {
         this.element = document.createElement('div');
     }
 
-    public configureBoard(): void {
+    public configure(): void {
         this.element.style.width = this.width + 'px';
         this.element.style.height = this.height + 'px';
         this.element.classList.add(Board.CSS);
@@ -29,14 +29,20 @@ class Board implements IBoard {
         this.element.classList.add(this.identifier);
     }
 
-    public displayBoard(): void {
+    public display(): void {
         this.rootElement.appendChild(this.element);
     }
 
+    public clear(): void {
+        while (this.rootElement.firstChild) {
+            this.rootElement.removeChild(this.rootElement.firstChild);
+        }
+    }
+
     public create() {
-        this.createBoard();
-        this.configureBoard();
-        this.displayBoard();
+        this.createElement();
+        this.configure();
+        this.display();
     }
 }
 
