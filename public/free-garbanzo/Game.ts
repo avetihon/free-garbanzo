@@ -1,12 +1,17 @@
-import Configuration from "./config/Configuration";
-import Location from './Location';
+import Board from './Board';
 import Snake from "./Snake";
 import Menu from "./Menu";
-import ControlHandler from "./ControlHandler";
+import ControlManager from "./ControlManager";
 import Engine from "./Engine";
 import GameObjectList from "./GameObjectList";
 import getShortUID from "./utils/getShortUID";
 import Level from "./Level";
+import PositionManager from "./PositionManager";
+import {IConfiguration} from "./models/IConfiguration";
+import CoordinatesMoveList from "./config/CoordinatesMoveList";
+import {IGameManager} from "./models/IGameManager";
+
+import GameManager from "./GameManager";
 
 
 class Game {
@@ -26,22 +31,39 @@ class Game {
     }
 
     public startNewGame(): void {
-        var configuration = new Configuration();
-        configuration.locationWidth = 100;
-        configuration.locationHeight = 100;
-        configuration.playersNumber = 1;
-        configuration.snakeDefaultSize = 3;
-        configuration.locationIdentifier = getShortUID();
-        configuration.rootElement = document.querySelector('.game');
+        var configuration: IConfiguration = {
+            blockSize: 10,
+            boardWidth: 100,
+            boardHeight: 100,
+            playersNumber: 1,
+            snakeDefaultSize: 3,
+            boardIdentifier: getShortUID('board'),
+            rootElement: document.querySelector('.game'),
+            transparentWall: false
+        };
 
-        var level: Level = new Level(configuration);
-        level.create();
+        var gameManager: IGameManager = new GameManager(configuration);
 
-        var location = new Location(configuration);
-        location.create();
+        gameManager
+            .createCoordinatesMoveList()
+            .createGameObjectList()
+            .createPositionManager()
+            .createLevel()
+            .createEngine();
 
-        var snake = new Snake(configuration);
-        snake.create();
+
+
+        var coordinatesMoveList = new CoordinatesMoveList(configuration).getCoordinatesMoveList();
+
+
+        var board = new Board(configuration);
+        board.create();
+
+        var snake = new Snake(1, configuration);
+        snake.coordinatesMoveList = coordinatesMoveList;
+
+        var positionManager: PositionManager = new PositionManager(configuration);
+        positionManager.setSnakePosition(snake);
 
         var gameObjectList: GameObjectList = new GameObjectList();
         gameObjectList.add(snake);
@@ -49,8 +71,8 @@ class Game {
         var engine: Engine = new Engine(configuration, gameObjectList);
         engine.create();
 
-        var controlHandler: ControlHandler = new ControlHandler(engine);
-        controlHandler.create();
+        var controlManager: ControlManager = new ControlManager(engine);
+        controlManager.create();
     }
 }
 

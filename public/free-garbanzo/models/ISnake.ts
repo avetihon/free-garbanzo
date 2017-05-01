@@ -1,6 +1,6 @@
-import {IFruit} from "./IFruit";
-
 export interface ISnake {
-    scores: number;
-    eat(fruit: IFruit): void;
+    id: string;
+    size: number;
+    nextMove(direction?: string): void;
+    setCoordinatesMoveList(coordinatesMoveList: any): any;
 }

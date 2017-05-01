@@ -1,6 +1,6 @@
 import Engine from "./Engine";
 
-class ControlHandler {
+class ControlManager {
     public engine: Engine;
     public constructor(engine: Engine) {
         this.engine = engine;
@@ -19,4 +19,4 @@ class ControlHandler {
     }
 }
 
-export default ControlHandler;
+export default ControlManager;

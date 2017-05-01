@@ -1,11 +1,19 @@
 class GameObjectList {
-    public list: any[];
+    public list: any;
     public constructor() {
-        this.list = [];
+        this.list = {};
     }
 
     public add(object: any): void {
-        this.list.push(object);
+        this.list[object.id] = object;
+    }
+
+    public removeBy(key: string) {
+        delete this.list[key];
+    }
+
+    public getList(): any {
+        return this.list;
     }
 }
 

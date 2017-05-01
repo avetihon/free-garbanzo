@@ -1,25 +1,26 @@
 import ControlList from "./config/ControlList";
-import {ICoordinates} from "./models/ICoordinates";
 import {IConfiguration} from "./models/IConfiguration";
 import DirectionList from "./config/DirectionList";
 import GameObjectList from "./GameObjectList";
+import GameStateList from "./config/GameStateList";
+import {ISnake} from "./models/ISnake";
+import Snake from "./Snake";
+import PlayerList from "./config/PlayerList";
 
 class Engine {
     public configuration: IConfiguration;
-    public nextMoveCoordinates: ICoordinates;
     public requestAnimationId: number;
-    public isPaused: boolean;
+    public gameState: GameStateList;
 
     /*@TODO Refactoring */
     public fps: number = 10;
-    public snakeDirection: string;
-    public gameObjectList: GameObjectList;
+    public direction: string;
+    public gameObjectList: any;
+    public player: number;
     public constructor(configuration: IConfiguration, gameObjectList: GameObjectList) {
         this.configuration = configuration;
-        this.nextMoveCoordinates = {x: 10, y: 0};
-        this.snakeDirection = DirectionList.RIGHT;
-        this.gameObjectList = gameObjectList;
-
+        this.gameObjectList = gameObjectList.getList();
+        this.player = 1;
     }
 
     /*@TODO Refactoring */
@@ -27,7 +28,6 @@ class Engine {
         var then: number = performance.now();
         var interval: number = 1000 / this.fps;
         var tolerance: number = 0.1;
-
 
         var animationLoop = (now: number): void => {
             this.requestAnimationId = requestAnimationFrame(animationLoop);
@@ -43,67 +43,48 @@ class Engine {
     }
 
     public snakeMovement(): void {
-        var snake = this.gameObjectList.list[0].elements[0];
-        var currentX: number = Number.parseInt(snake.style.left);
-        var currentY: number = Number.parseInt(snake.style.top);
-        var newSnakeXPosition: number = currentX + this.nextMoveCoordinates.x;
-        var newSnakeYPosition: number = currentY + this.nextMoveCoordinates.y;
+        // както получаем змейку ???
 
-        this.checkBoundsOverstep(newSnakeXPosition, newSnakeYPosition);
-        // this.checkGameObjectCoincidence(newSnakeXPosition, newSnakeYPosition);
-
-        // var snakeParts = document.querySelectorAll('.js-snake');
-        //
-        // var head: HTMLElement = <HTMLElement>snakeParts[0];
-        //
-        // var i: number;
-        // var len: number;
-        // var snakePart: HTMLElement;
-        // for (i = 0, len = snakeParts.length; i < len; i += 1) {
-        //     snakePart =
-        //     var currentX: number = Number.parseInt(snakePart.style.left);
-        //     var currentY: number = Number.parseInt(snakePart.style.top);
-        //
-        //     snakePart.style.left = currentX + coordinates.x + 'px';
-        //     snakePart.style.top =  currentY + coordinates.y + 'px';
-        // }
-
-        snake.style.left = newSnakeXPosition + 'px';
-        snake.style.top =  newSnakeYPosition + 'px';
+        var snake: ISnake = this.gameObjectList[Snake.getSnakeIdBy(this.player)];
+        snake.nextMove();
     }
 
     public pause(): void {
         cancelAnimationFrame(this.requestAnimationId);
     }
 
-    public setNextMoveCoordinates(x: number, y: number, direction: string): void {
+    public setNewCoordinates(direction: string, player: number): void {
         /* It's not bad ? */
-        if (this.snakeDirection === DirectionList.UP && direction !== DirectionList.DOWN
-            || this.snakeDirection === DirectionList.DOWN && direction !== DirectionList.UP
-            || this.snakeDirection === DirectionList.LEFT && direction !== DirectionList.RIGHT
-            || this.snakeDirection === DirectionList.RIGHT && direction !== DirectionList.LEFT) {
-            this.nextMoveCoordinates.x = x;
-            this.nextMoveCoordinates.y = y;
-            this.snakeDirection = direction;
-        }
+        this.direction = direction;
+        this.player = player;
     }
+
+    // public isPossibleMovement(snakeDirection: string): boolean {
+    //     if (snakeDirection === DirectionList.UP && this.direction !== DirectionList.DOWN
+    //         || snakeDirection === DirectionList.DOWN && this.direction !== DirectionList.UP
+    //         || snakeDirection === DirectionList.LEFT && this.direction !== DirectionList.RIGHT
+    //         || snakeDirection === DirectionList.RIGHT && this.direction !== DirectionList.LEFT) {
+    //         return true;
+    //     }
+    //     return false;
+    // }
 
     public setDirection(keyCode: number): void {
         switch (keyCode) {
             case ControlList.W: {
-                this.setNextMoveCoordinates(0, -10, DirectionList.UP);
+                this.setNewCoordinates(DirectionList.UP, PlayerList.PLAYER_ONE);
                 break;
             }
             case ControlList.S: {
-                this.setNextMoveCoordinates(0, +10, DirectionList.DOWN);
+                this.setNewCoordinates(DirectionList.DOWN, PlayerList.PLAYER_ONE);
                 break;
             }
             case ControlList.A: {
-                this.setNextMoveCoordinates(-10, 0, DirectionList.LEFT);
+                this.setNewCoordinates(DirectionList.LEFT, PlayerList.PLAYER_ONE);
                 break;
             }
             case ControlList.D: {
-                this.setNextMoveCoordinates(+10, 0, DirectionList.RIGHT);
+                this.setNewCoordinates(DirectionList.RIGHT, PlayerList.PLAYER_ONE);
                 break;
             }
             case ControlList.SPACE: {
@@ -116,21 +97,26 @@ class Engine {
         }
     }
 
-    public checkBoundsOverstep(x: number, y: number): void {
-        if (x < 0
-            || y < 0
-            || x > this.configuration.locationWidth
-            || y > this.configuration.locationHeight) {
-            this.endGame();
-        }
-    }
-
     public endGame(): void {
         this.pause();
     }
 
+    public createGameObjects(): void {
+        var i: number;
+        var len: number;
+        var gameObject: any;
+        var gameObjectKey: string;
+        var gameObjectKeys: string[] = Object.keys(this.gameObjectList);
+        for (i = 0, len = gameObjectKeys.length; i < len; i += 1) {
+            gameObjectKey = gameObjectKeys[i];
+            gameObject = this.gameObjectList[gameObjectKey];
+            gameObject.create();
+        }
+    }
+
     public create(): void {
-        // this.startAnimation();
+        this.createGameObjects();
+        this.startAnimation();
     }
 }
 

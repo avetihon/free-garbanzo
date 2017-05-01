@@ -3,3 +3,7 @@
   position: absolute;
   background-color: var(--snake-head-color);
 }
+
+.snake--head {
+    background-color: aqua;
+}

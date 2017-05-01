@@ -1,7 +1,7 @@
-import {ILocation} from "./models/ILocation";
+import {IBoard} from "./models/IBoard";
 import {IConfiguration} from "./models/IConfiguration";
 
-class Location implements ILocation {
+class Board implements IBoard {
     public static readonly CSS: string = 'location';
     public static readonly STYLE: string = 'location--style';
     public width: number;
@@ -11,29 +11,33 @@ class Location implements ILocation {
     public rootElement: Element;
 
     public constructor(configuration: IConfiguration) {
-        this.width = configuration.locationWidth;
-        this.height = configuration.locationHeight;
-        this.identifier = configuration.locationIdentifier;
+        this.width = configuration.boardWidth;
+        this.height = configuration.boardHeight;
+        this.identifier = configuration.boardIdentifier;
         this.rootElement = configuration.rootElement;
     }
 
-    public setupLocation(): void {
+    public createBoard(): void {
         this.element = document.createElement('div');
+    }
+
+    public configureBoard(): void {
         this.element.style.width = this.width + 'px';
         this.element.style.height = this.height + 'px';
-        this.element.classList.add(Location.CSS);
-        this.element.classList.add(Location.STYLE);
+        this.element.classList.add(Board.CSS);
+        this.element.classList.add(Board.STYLE);
         this.element.classList.add(this.identifier);
     }
 
-    public appendToRootElement(): void {
+    public displayBoard(): void {
         this.rootElement.appendChild(this.element);
     }
 
     public create() {
-        this.setupLocation();
-        this.appendToRootElement();
+        this.createBoard();
+        this.configureBoard();
+        this.displayBoard();
     }
 }
 
-export default Location;
+export default Board;

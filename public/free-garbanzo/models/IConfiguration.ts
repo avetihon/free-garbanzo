@@ -1,8 +1,8 @@
 export interface IConfiguration {
     blockSize: number;
-    locationWidth: number;
-    locationHeight: number;
-    locationIdentifier: string;
+    boardWidth: number;
+    boardHeight: number;
+    boardIdentifier: string;
     playersNumber: number;
     snakeDefaultSize: number;
     transparentWall: boolean;
