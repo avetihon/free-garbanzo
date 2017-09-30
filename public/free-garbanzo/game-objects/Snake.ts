@@ -1,6 +1,7 @@
-import {ISnake} from "./models/ISnake";
-import {ICoordinates} from "./models/ICoordinates";
-import {IConfiguration} from "./models/IConfiguration";
+import {ISnake} from "../models/ISnake";
+import {ICoordinates} from "../models/ICoordinates";
+import {IConfiguration} from "../models/IConfiguration";
+import vectorList from "../config/VectorList";
 
 class Snake implements ISnake {
     public static readonly PREFIX: string = 'snake';
@@ -10,7 +11,7 @@ class Snake implements ISnake {
     public elements: ICoordinates[];
     public elementsHTML: HTMLElement[];
     public configuration: IConfiguration;
-    public coordinatesMoveList: any;
+    public vectorList: any;
 
     public constructor(player: number, configuration: IConfiguration) {
         this.id = Snake.PREFIX + player;
@@ -18,6 +19,7 @@ class Snake implements ISnake {
         this.configuration = configuration;
         this.elements = [];
         this.elementsHTML = [];
+        this.vectorList = vectorList;
     }
 
     public static getSnakeIdBy(player: number) {
@@ -28,18 +30,14 @@ class Snake implements ISnake {
         return this.elements[this.size - 1];
     }
 
-    public setCoordinatesMoveList(coordinatesMoveList: any): void {
-        this.coordinatesMoveList = coordinatesMoveList;
-    }
-
     public setStartPosition(startCoordinates: ICoordinates, direction: string): void {
-        var coordinatesNext: ICoordinates = this.coordinatesMoveList[direction];
+        var vector: ICoordinates = this.vectorList[direction];
         var i: number;
         var len: number;
         for (i = 0, len = this.size; i < len; i += 1) {
             this.elements.push({
-                x: startCoordinates.x + (i * coordinatesNext.x),
-                y: startCoordinates.y + (i * coordinatesNext.y)
+                x: startCoordinates.x + (i * vector.x * this.configuration.blockSize),
+                y: startCoordinates.y + (i * vector.y * this.configuration.blockSize)
             });
         }
 
@@ -75,10 +73,10 @@ class Snake implements ISnake {
 
     public nextMove(direction: string = this.direction): void {
         this.direction = direction;
-        var coordinates = this.coordinatesMoveList[direction];
+        var vector = this.vectorList[direction];
         var {x, y} = this.getSnakeHead();
-        x = x + coordinates.x;
-        y = y + coordinates.y;
+        x = (x + vector.x) * this.configuration.blockSize;
+        y = (y + vector.y) * this.configuration.blockSize;
         this.elements.shift();
         this.elements.push({x, y});
 

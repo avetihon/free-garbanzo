@@ -3,4 +3,5 @@ export interface IGameManager {
     createGameObjectList(): this;
     createLevel(): this;
     createEngine(): this;
+    loadLevel(): this;
 }

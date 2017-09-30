@@ -15,8 +15,16 @@ class GameObjectList implements IGameObjectList {
         this.list[object.id] = object;
     }
 
+    public getObject(id: string): IGameObject | ISnake {
+        return this.list[id];
+    }
+
     public removeBy(key: string): void {
         delete this.list[key];
+    }
+
+    public clear(): void {
+        this.list = {};
     }
 
     public getList(): any {

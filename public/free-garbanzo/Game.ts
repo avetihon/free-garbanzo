@@ -1,5 +1,5 @@
 import Board from './Board';
-import Snake from "./Snake";
+import Snake from "./game-objects/Snake";
 import Menu from "./Menu";
 import ControlManager from "./ControlManager";
 import Engine from "./Engine";
@@ -8,10 +8,10 @@ import getShortUID from "./utils/getShortUID";
 import Level from "./Level";
 import PositionManager from "./PositionManager";
 import {IConfiguration} from "./models/IConfiguration";
-import CoordinatesMoveList from "./config/CoordinatesMoveList";
 import {IGameManager} from "./models/IGameManager";
 
 import GameManager from "./GameManager";
+import GameStateList from "./config/GameStateList";
 
 
 class Game {
@@ -30,7 +30,7 @@ class Game {
         menu.create();
     }
 
-    public startNewGame(): void {
+    public initGameManager(): void {
         var configuration: IConfiguration = {
             blockSize: 10,
             boardWidth: 100,
@@ -42,6 +42,8 @@ class Game {
             transparentWall: false
         };
 
+        var gameState: string;
+
         var gameManager: IGameManager = new GameManager(configuration);
 
         gameManager
@@ -49,6 +51,12 @@ class Game {
             .createGameObjectList()
             .createLevel()
             .createEngine();
+
+        while (gameState === GameStateList.PLAYED) {
+
+        }
+
+        gameManager.loadLevel();
 
 
 

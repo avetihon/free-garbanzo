@@ -1,4 +1,4 @@
-import Snake from "./Snake";
+import Snake from "./game-objects/Snake";
 import {IConfiguration} from "./models/IConfiguration";
 import {ICoordinates} from "./models/ICoordinates";
 import DirectionList from "./config/DirectionList";

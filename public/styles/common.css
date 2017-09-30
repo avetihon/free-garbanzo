@@ -1,7 +1,21 @@
 :root {
-  --font-lato: 'Lato', sans-serif;
+    --font-lato: 'Lato', sans-serif;
+}
+
+html {
+    box-sizing: border-box;
 }
 
 body {
-  font-family: var(--font-lato);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: var(--font-lato);
+    margin: 0;
+    padding: var(--gap);
+}
+
+*, *::before, *::after {
+    box-sizing: inherit;
 }

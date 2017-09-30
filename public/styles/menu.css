@@ -1,7 +1,9 @@
 .menu--style {
-  color: var(--menu-font-color);
+    width: 30%;
+    color: var(--menu-font-color);
+    background-color: var(--menu-background-color);
 }
 
 .menu__title {
-  text-transform: uppercase;
+    text-transform: uppercase;
 }

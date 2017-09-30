@@ -1,5 +1,5 @@
-import {IGameObject} from "./models/IGameObject";
-import getShortUID from "./utils/getShortUID";
+import {IGameObject} from "../models/IGameObject";
+import getShortUID from "../utils/getShortUID";
 
 abstract class GameObject implements IGameObject {
     public id: string;

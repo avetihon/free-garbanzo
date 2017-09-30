@@ -4,9 +4,8 @@ import GameObjectList from "./GameObjectList";
 import {IBoard} from "./models/IBoard";
 import Board from "./Board";
 import {ISnake} from "./models/ISnake";
-import Snake from "./Snake";
+import Snake from "./game-objects/Snake";
 import PositionManager from "./PositionManager";
-import CoordinatesMoveList from "./config/CoordinatesMoveList";
 import {ICoordinates} from "./models/ICoordinates";
 
 
@@ -16,7 +15,7 @@ class Level {
     public rootElement: Element;
 
     public board: IBoard;
-    public gameObjectList: any;
+    public gameObjectList: IGameObjectList;
     public constructor(configuration: IConfiguration, positionManager: PositionManager, gameObjectList: IGameObjectList) {
         this.configuration = configuration;
         this.positionManager = positionManager;
@@ -35,7 +34,6 @@ class Level {
     }
 
     public createSnake(): void {
-        var coordinatesMoveList = new CoordinatesMoveList(this.configuration).getCoordinatesMoveList();
         var snake: ISnake;
 
         var i: number;
@@ -43,7 +41,6 @@ class Level {
         for (i = 1, len = this.configuration.playersNumber; i <= len; i += 1) {
             var {startCoordinates, direction} = this.positionManager.getSnakePosition(i);
             snake = new Snake(i, this.configuration);
-            snake.setCoordinatesMoveList(coordinatesMoveList);
             snake.setStartPosition(startCoordinates, direction);
             this.gameObjectList.add(snake);
         }
@@ -66,6 +63,12 @@ class Level {
         this.createBoard();
         this.createSnake();
         this.createGameObjects();
+    }
+
+    public clear(): void {
+        this.gameObjectList.clear();
+        this.virtualBoard.clear();
+        this.board.clear();
     }
 }
 

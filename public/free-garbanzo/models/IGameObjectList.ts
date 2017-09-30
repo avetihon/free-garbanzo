@@ -7,5 +7,6 @@ export interface IGameObjectList {
     }
     add(object: IGameObject | ISnake): void;
     removeBy(key: string): void;
+    clear(): void;
     getList(): any;
 }

@@ -1,9 +1,8 @@
 import {IGameManager} from "./models/IGameManager";
 import {IConfiguration} from "./models/IConfiguration";
 import PositionManager from "./PositionManager";
-import Snake from "./Snake";
+import Snake from "./game-objects/Snake";
 import {ISnake} from "./models/ISnake";
-import CoordinatesMoveList from "./config/CoordinatesMoveList";
 import GameObjectList from "./GameObjectList";
 import {IGameObjectList} from "./models/IGameObjectList";
 import Engine from "./Engine";
@@ -46,6 +45,10 @@ class GameManager implements IGameManager {
 
         var controlManager: ControlManager = new ControlManager(engine);
         controlManager.create();
+        return this;
+    }
+
+    public loadLevel(): this {
         return this;
     }
 }

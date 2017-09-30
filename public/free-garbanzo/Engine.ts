@@ -3,7 +3,7 @@ import {IConfiguration} from "./models/IConfiguration";
 import DirectionList from "./config/DirectionList";
 import GameStateList from "./config/GameStateList";
 import {ISnake} from "./models/ISnake";
-import Snake from "./Snake";
+import Snake from "./game-objects/Snake";
 import PlayerList from "./config/PlayerList";
 import {IGameObjectList} from "./models/IGameObjectList";
 

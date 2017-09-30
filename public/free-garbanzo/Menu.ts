@@ -5,7 +5,7 @@ class Menu {
 
     public newGameHandler(): void {
         var game: Game = Game.getInstance();
-        game.startNewGame();
+        game.initGameManager();
     }
 
     public createEventListeners(): void {

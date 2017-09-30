@@ -1,5 +1,6 @@
 :root {
-  --primary-color: #ffdebf;
-  --menu-font-color: #faa1a1;
-  --snake-head-color: #ffcdb3;
+    --menu-background-color: #fff9eb;
+    --primary-color: #ffdebf;
+    --menu-font-color: #faa1a1;
+    --snake-head-color: #ffcdb3;
 }
